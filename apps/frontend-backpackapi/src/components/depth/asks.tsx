@@ -63,6 +63,7 @@ export default function AsksTable({
   }
 
   const maxTotal = currentTotal;
+  releventAsks.reverse();
   const asksWithTotal = releventAsks.map(([price, quantity], index) => [
     price,
     quantity,
@@ -71,21 +72,26 @@ export default function AsksTable({
 
   console.log(asksWithTotal);
 
-  const [base, quote] = market.split("_");
+  
 
   
   return (
-    <div>
+  
+       
+       
+            <div className="">
+                {asksWithTotal.map(([price, size, total], index) => (
+                    <div key={index} className="flex justify-between mx-2 text-xs font-light my-1">
+                        <div className="text-destructive">{price}</div>
+                        <div>{size}</div>
+                        <div>{parseFloat(total.toString()).toFixed(4)}</div>
+                    </div>
+                ))}
+           
+            </div>
+       
      
-    </div>
+    
   );
 }
 
-//one row of the table
-
-/*
-
-
-
-
-*/

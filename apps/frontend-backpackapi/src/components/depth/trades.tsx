@@ -24,7 +24,7 @@ export default function TradesTable({ market }: { market: string }) {
           <tr className="border-b ">
             <th className="py-2 text-left">Price ({quote})</th>
             <th className="py-2 text-left">Qty ({base})</th>
-            <th className="py-2 text-center">Time</th>
+            <th className="py-2 text-left">Time</th>
           </tr>
         </thead>
 
@@ -32,7 +32,7 @@ export default function TradesTable({ market }: { market: string }) {
           {trades.map((trade: Trade) => (
             <tr key={trade.id} className="text-xs mx-2">
               <td
-                className={`py-1 text-left ${
+                className={`py-1  ${
                   trade.isBuyerMaker == false
                     ? "text-green-500"
                     : "text-red-500"
@@ -40,8 +40,8 @@ export default function TradesTable({ market }: { market: string }) {
               >
                 {parseFloat(trade.price).toFixed(2)}
               </td>
-              <td className="py-1 text-left">{trade.quantity}</td>
-              <td className="py-1 text-right">
+              <td className="py-1 ">{trade.quantity}</td>
+              <td className="py-1 ">
                 {getTimestamp(trade.timestamp)}
               </td>
             </tr>
