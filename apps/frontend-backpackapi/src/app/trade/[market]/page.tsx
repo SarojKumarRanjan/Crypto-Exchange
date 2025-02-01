@@ -21,14 +21,14 @@ export default async function TradePage({
           <div className="flex-1">
             <KlinesChart market={market as string} />
           </div>
-          <div className="w-full lg:w-1/3">
+          <div className="w-full lg:w-1/4">
             <OrderBook market={market as string} />
           </div>
         </div>
       </div>
 
       {/* Right Section */}
-      <div className="w-full lg:w-1/4 min-w-[300px]">
+      <div className="w-full lg:w-1/5 min-w-[300px]">
         <OrderSwap market={market as string} />
       </div>
     </div>

@@ -1,22 +1,20 @@
-import React from 'react';
+"use client";
 
-// Define the type for the market data
-type MarketData = {
-  symbol: string;
-  price: number;
-  change24h: number;
-  high24h: number;
-  low24h: number;
-  volume24h: number;
-};
+import React, { useState } from 'react';
+import { Ticker } from '@/lib/types';
+import { getTicker } from '@/lib/Apicalls';
+import { useEffect } from 'react';
 
 
 
-// Sub-component for the market pair button
+
+
+
+
 const MarketPairButton: React.FC<{ symbol: string }> = ({ symbol }) => {
   // Split symbol into base and quote (e.g., BTC_USDC)
-  const base = "BTC";
-  const quote = "USDC";
+  
+  const [base, quote] = symbol.split("_");
 
   return (
     <button
@@ -63,7 +61,7 @@ const MarketPairButton: React.FC<{ symbol: string }> = ({ symbol }) => {
   );
 };
 
-// Sub-component for displaying a market stat
+
 const MarketStat: React.FC<{ label: string; value: string | number; isNegative?: boolean }> = ({
   label,
   value,
@@ -83,26 +81,48 @@ const MarketStat: React.FC<{ label: string; value: string | number; isNegative?:
   );
 };
 
-// Main MarketBar component
+
 const MarketBar = ({ market }: { market: string }) => {
-  const symbol = "BTC_USDC";
-  const price = 50000;
-  const change24h = 0.5;
-  const high24h = 60000;
-  const low24h = 40000;
-  const volume24h = 100000000;
+
+  const [ticker, setTicker] =   useState<Ticker>();
+
+
+  useEffect(() => {
+    getTicker(market).then((ticker: Ticker) => {
+      setTicker(ticker);
+    });
+  }, [market]);
+
+
+  
+
+
+  if(!ticker){
+    return <div>
+      loading.....
+    </div>
+  }
 
   return (
     <div className="flex items-center flex-row no-scrollbar mr-4 h-[72px] w-full overflow-auto pl-4 bg-background border-b">
       <div className="flex justify-between flex-row w-full gap-4">
         <div className="flex flex-row shrink-0 gap-[32px]">
-          <MarketPairButton symbol={symbol} />
+          <MarketPairButton symbol={ticker.symbol} />
           <div className="flex items-center flex-row flex-wrap space-x-6">
-            <MarketStat label="Price" value={price.toLocaleString()} isNegative={price < 0} />
-            <MarketStat label="24H Change" value={`${change24h.toFixed(2)}%`} isNegative={change24h < 0} />
-            <MarketStat label="24H High" value={high24h.toLocaleString()} />
-            <MarketStat label="24H Low" value={low24h.toLocaleString()} />
-            <MarketStat label="24H Volume (USDC)" value={volume24h.toLocaleString()} />
+            <div>
+                  
+            <div className="flex flex-col">
+                            <p className={`font-medium text-xs text-muted-foreground`}>24H Change</p>
+                            <p className={`  font-medium tabular-nums leading-5 text-sm  ${Number(ticker?.priceChange) > 0 ? "text-green-500" : "text-red-500"}`}>{Number(ticker?.priceChange) > 0 ? "+" : ""} {ticker?.priceChange} {Number(ticker?.priceChangePercent)?.toFixed(2)}%</p></div><div className="flex flex-col">
+                                
+                                </div>
+
+            </div>
+            
+           
+            <MarketStat label="24H High" value={ticker.high} />
+            <MarketStat label="24H Low" value={ticker.low} />
+            <MarketStat label="24H Volume (USDC)" value={parseInt(ticker.quoteVolume).toFixed(2)} />
           </div>
         </div>
       </div>
