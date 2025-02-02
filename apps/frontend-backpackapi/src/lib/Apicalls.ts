@@ -28,10 +28,10 @@ export async function getTicker(market: string): Promise<Ticker> {
 }
 
 export async function getDepth(market: string): Promise<Depth> {
-    console.log("api called");
+   // console.log("api called");
     
     const response = await axios.get(`${BASE_URL}/depth?symbol=${market}`);
-    console.log(response);
+   // console.log(response);
     const data: Depth = response.data;
     
     return data;

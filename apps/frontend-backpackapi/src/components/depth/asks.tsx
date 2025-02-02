@@ -28,11 +28,11 @@ export interface Depth{
 
 */
 
-import { ScrollArea } from "../ui/scroll-area";
+
 
 export default function AsksTable({
   asks,
-  market,
+  
 }: {
   asks: [string, string][];
   market: string;
@@ -70,7 +70,7 @@ export default function AsksTable({
     totals[totals.length - 1 - index], // Gets reversed  total
   ]);
 
-  console.log(asksWithTotal);
+  //console.log(asksWithTotal);
 
   
 
@@ -84,7 +84,7 @@ export default function AsksTable({
                     <div key={index} className="flex justify-between mx-2 text-xs font-light my-1">
                         <div className="text-destructive">{price}</div>
                         <div>{size}</div>
-                        <div>{parseFloat(total.toString()).toFixed(4)}</div>
+                        <div>{parseFloat(total.toString()).toFixed(5)}</div>
                     </div>
                 ))}
            

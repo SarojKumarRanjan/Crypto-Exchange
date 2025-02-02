@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Ticker } from "@/lib/types";
 import { getTicker } from "@/lib/Apicalls";
 import { useEffect } from "react";
+import { WebsocketManager } from "@/lib/Websocket";
 
 const MarketPairButton: React.FC<{ symbol: string }> = ({ symbol }) => {
   // Split symbol into base and quote (e.g., BTC_USDC)
@@ -82,7 +83,47 @@ const MarketBar = ({ market }: { market: string }) => {
     getTicker(market).then((ticker: Ticker) => {
       setTicker(ticker);
     });
+
+    WebsocketManager.getInstance().pushCallbacks(
+      "ticker",
+      (data: Partial<Ticker>) => {
+        return setTicker((prevTicker) => {
+          return {
+            firstPrice: data?.firstPrice ?? prevTicker?.firstPrice ?? "",
+            high: data?.high ?? prevTicker?.high ?? "",
+            lastPrice: data?.lastPrice ?? prevTicker?.lastPrice ?? "",
+            low: data?.low ?? prevTicker?.low ?? "",
+            priceChange: data?.priceChange ?? prevTicker?.priceChange ?? "",
+            priceChangePercent:
+              data?.priceChangePercent ?? prevTicker?.priceChangePercent ?? "",
+            quoteVolume: data?.quoteVolume ?? prevTicker?.quoteVolume ?? "",
+            symbol: data?.symbol ?? prevTicker?.symbol ?? "",
+            volume: data?.volume ?? prevTicker?.volume ?? "",
+            trades: data?.trades ?? prevTicker?.trades ?? "",
+          };
+        });
+      },
+      `Ticker-${market}`
+    );
+
+    WebsocketManager.getInstance().sendMessage({
+      method: "SUBSCRIBE",
+      params: [`ticker.${market}`],
+    });
+
+    return () => {
+      WebsocketManager.getInstance().popCallbacks(
+        "ticker",
+        `Ticker-${market}`
+      );
+      WebsocketManager.getInstance().sendMessage({
+        method: "UNSUBSCRIBE",
+        params: [`ticker.${market}`],
+      });
+    };
   }, [market]);
+
+  //console.log(ticker);
 
   if (!ticker) {
     return <div>loading.....</div>;
