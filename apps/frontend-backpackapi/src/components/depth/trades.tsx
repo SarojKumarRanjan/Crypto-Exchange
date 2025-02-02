@@ -4,16 +4,51 @@ import { useState, useEffect } from "react";
 
 import { getTrades } from "@/lib/Apicalls";
 import { Trade } from "@/lib/types";
+import { WebsocketManager } from "@/lib/Websocket";
 
 export default function TradesTable({ market }: { market: string }) {
   const [trades, setTrades] = useState<Trade[]>();
   const [base, quote] = market.split("_");
-
+  
   useEffect(() => {
     getTrades(market).then((data) => {
       setTrades(data);
-      console.log(data);
+      //console.log(data);
     });
+  
+    const callbackId = `Trade-${market}`;
+  
+    
+    WebsocketManager.getInstance().pushCallbacks("trade", (data: Partial<Trade>) => {
+      setTrades((prevTrades: Trade[] | undefined) => {
+        console.log(data);
+        
+        const newTrade: Trade = {
+          id: data?.id ?? 0,
+          isBuyerMaker: data?.isBuyerMaker ?? false,
+          price: data?.price ?? "",
+          quantity: data?.quantity ?? "",
+          quoteQuantity: data?.quoteQuantity ?? "",
+          timestamp: data?.timestamp?? 0,
+        };
+        
+        return [newTrade, ...(prevTrades || [])].slice(0, 100);
+      });
+    }, callbackId);
+
+    WebsocketManager.getInstance().sendMessage({
+      method: "SUBSCRIBE",
+      params: [`trade.${market}`],
+    });
+  
+    return () => {
+      WebsocketManager.getInstance().popCallbacks("trade", callbackId);
+      WebsocketManager.getInstance().sendMessage({
+        method: "UNSUBSCRIBE",
+        params: [`trade.${market}`],
+      });
+
+    }
   }, [market]);
   if (!trades) return <div>Loading...</div>;
 
