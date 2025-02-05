@@ -65,7 +65,7 @@ import {
       });
       this.chart = chart;
       this.candleSeries = chart.addSeries(CandlestickSeries);
-  console.log("candle data stream",initialData);
+  //console.log("candle data stream",initialData);
   
       this.candleSeries.setData(
         initialData.map((data) => ({
@@ -86,7 +86,7 @@ import {
      // console.log("candle data stream",klineData);
       
      const candleStartTime = new Date(klineData.t).getTime(); 
-    console.log("candleStartTime", klineData);
+    //console.log("candleStartTime", klineData);
 
     //console.log("candleStartTime", klineData.t);
     
