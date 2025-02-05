@@ -1,4 +1,4 @@
-import { Ticker,Trade } from "./types";
+import { Ticker, Trade } from "./types";
 
 export const BASE_URL = "wss://ws.backpack.exchange/";
 
@@ -39,9 +39,9 @@ export class WebsocketManager {
       //type can be ticker, orderbook, trade, kline, order
 
       if (this.callbacks[type]) {
-       // console.log("callbacks , " , this.callbacks);
-        
-       // console.log("callbacks found for type", type);
+        // console.log("callbacks , " , this.callbacks);
+
+        // console.log("callbacks found for type", type);
         this.callbacks[type].forEach(({ callback }: { callback: any }) => {
           if (type === "ticker") {
             const newTicker: Partial<Ticker> = {
@@ -60,17 +60,31 @@ export class WebsocketManager {
             callback({ asks: updatedasks, bids: updatedbids });
           }
           if (type === "trade") {
-
             const newTrade: Partial<Trade> = {
               price: message.data.p,
               quantity: message.data.q,
               isBuyerMaker: message.data.m,
               id: message.data.t,
-              timestamp: message.data.E,
-              
-              
+              timestamp: message.data.E / 1000,
             };
             callback(newTrade);
+          }
+
+          if (type === "kline") {
+            // console.log("kline data", message.data);
+
+            const klineData = {
+              t: message.data.t, // Convert to seconds
+              T: message.data.T,
+              o: message.data.o,
+              c: message.data.c,
+              h: message.data.h,
+              l: message.data.l,
+              X: message.data.X,
+            };
+            //console.log("kline data", klineData);
+
+            callback(klineData);
           }
         });
       }

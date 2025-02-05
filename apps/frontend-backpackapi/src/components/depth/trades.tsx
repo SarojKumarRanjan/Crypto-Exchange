@@ -21,7 +21,7 @@ export default function TradesTable({ market }: { market: string }) {
     
     WebsocketManager.getInstance().pushCallbacks("trade", (data: Partial<Trade>) => {
       setTrades((prevTrades: Trade[] | undefined) => {
-        console.log(data);
+        //console.log(data);
         
         const newTrade: Trade = {
           id: data?.id ?? 0,
