@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Rubik_Bubbles } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider"
 
 const roboto = Rubik_Bubbles({ weight: ["400"], subsets: ["latin"] });
 
@@ -19,7 +20,14 @@ export default function RootLayout({
       <body
         className={`${roboto.className} antialiased`}
       >
-        {children}
+         <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
       </body>
     </html>
   );

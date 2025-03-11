@@ -11,7 +11,7 @@ export default async function TradePage({
   const { market } = await params;
 
   return (
-    <div className="flex flex-col lg:flex-row flex-1 p-4 gap-4">
+    <div className="font-['Clash_Display'] flex flex-col lg:flex-row flex-1 p-4 gap-4">
       {/* Left Section */}
       <div className="flex flex-col flex-1 w-full lg:w-auto">
         <div className="mb-4">

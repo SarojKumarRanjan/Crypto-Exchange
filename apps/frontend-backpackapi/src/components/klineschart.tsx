@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { ChartManager } from "../lib/ChartManager";
 import { getKlines } from "../lib/Apicalls";
 import { KLine } from "../lib/types";
-import { log } from "console";
+
 import { WebsocketManager } from "@/lib/Websocket";
 
 export default function KlinesChart({

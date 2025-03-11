@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Apple, Play } from "lucide-react";
+import CryptoMarket from "@/components/crypto-table";
 
 export default function Home() {
   return (
@@ -64,7 +64,9 @@ export default function Home() {
             
           </div>
         </div>
+        <CryptoMarket />
       </main>
+      
     </div>
   );
 }
