@@ -19,7 +19,7 @@ export class redis{
 
    }
 
-
+// singlton pattern so that we have only one instance of redis
     public static getInstance(): redis{
          if(!redis.instance){
               redis.instance = new redis();
@@ -27,7 +27,26 @@ export class redis{
          return redis.instance;
     }
 
-    
+
+    public sendAndAwait(message){
+        return new Promise((resolve)=>{
+            //generate a random client id
+            const clientId = this.getClientId();
+            //subscribe to the client id
+            this.client.subscribe(clientId,(message)=>{
+                //once we receive the message we unsubscribe from the client id
+                this.client.unsubscribe(clientId);
+                //resolve the promise
+                resolve(message);
+            });
+            //publish the message to the client id
+           
+            this.publisher.lPush("message",JSON.stringify({clientId,message}));
+        });
+
+
+    }
+
 
 
     public getClientId(){
