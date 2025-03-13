@@ -73,7 +73,7 @@ export default function TradesTable({ market }: { market: string }) {
                     : "text-red-500"
                 }`}
               >
-                {parseFloat(trade.price).toFixed(2)}
+                {parseFloat(trade.price).toFixed(8)}
               </td>
               <td className="py-1 ">{trade.quantity}</td>
               <td className="py-1 ">
