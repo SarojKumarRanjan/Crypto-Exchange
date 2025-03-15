@@ -99,3 +99,16 @@ export type messageToEngine = {
         market: string
     }
 }
+
+
+export type depthtype = {
+    start: string,
+end: string,
+open: string,
+high: string,
+low: string,
+close: string,
+volume: string,
+quoteVolume: string,
+trades: string
+}

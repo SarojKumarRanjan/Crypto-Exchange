@@ -1,4 +1,5 @@
 import { RedisClientType,createClient } from "redis";
+import { messageToEngine,messageFromOrderBook } from "./types";
 
 
 
@@ -28,16 +29,16 @@ export class redis{
     }
 
 
-    public sendAndAwait(message){
-        return new Promise((resolve)=>{
+    public sendAndAwait(message:messageToEngine){
+        return new Promise<messageFromOrderBook>((resolve)=>{
             //generate a random client id
             const clientId = this.getClientId();
             //subscribe to the client id
-            this.client.subscribe(clientId,(message)=>{
+            this.client.subscribe(clientId,(message) => {
                 //once we receive the message we unsubscribe from the client id
                 this.client.unsubscribe(clientId);
                 //resolve the promise
-                resolve(message);
+                resolve(JSON.parse(message));
             });
             //publish the message to the client id
            
