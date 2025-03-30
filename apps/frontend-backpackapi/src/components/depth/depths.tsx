@@ -8,14 +8,25 @@ import { ScrollArea } from "../ui/scroll-area";
 import BidsTable from "./bids";
 import { WebsocketManager } from "@/lib/Websocket";
 
+interface DepthEvent {
+          // Symbol (e.g., "SOL_USDC")
+  asks: [string, string][]; // Asks array: [price, quantity][]
+  bids: [string, string][]; // Bids array: [price, quantity][]
+         // Engine timestamp in microseconds
+}
+
 export default function Depths({ market }: { market: string }) {
   const [ticker, setTicker] = useState<Ticker>();
   const [ask, setAsks] = useState<[string, string][]>();
   const [bids, setBids] = useState<[string, string][]>();
   useEffect(() => {
     getDepth(market).then((data: Depth) => {
-      setAsks(data.asks);
-      setBids(data.bids.reverse());
+      
+  const releventAsks = data.asks.slice(0, 20);
+  
+  const releventBids = data.bids.slice(0, 20);
+      setAsks(releventAsks);
+      setBids(releventBids.reverse());
     });
     getTicker(market).then((data: Ticker) => {
       setTicker(data);
@@ -25,34 +36,35 @@ export default function Depths({ market }: { market: string }) {
 
     WebsocketManager.getInstance().pushCallbacks(
       "depth",
-      (data: any) => {
-        setBids((originalBids) => {
+      (data: DepthEvent) => {
+        
+      if(data.bids.length>0){
+        
+        
+        if(parseFloat(data.bids[0][0])!=0 && parseFloat(data.bids[0][1])!=0){
+        
+        
+         setBids((originalBids) => {
           const bidsAfterUpdate = [...(originalBids || [])];
 
-          for (let i = 0; i < bidsAfterUpdate.length; i++) {
-            for (let j = 0; j < data.bids.length; j++) {
-              if (bidsAfterUpdate[i][0] === data.bids[j][0]) {
-                bidsAfterUpdate[i][1] = data.bids[j][1];
-                break;
-              }
-            }
-          }
-          return bidsAfterUpdate;
+          let newArray = bidsAfterUpdate.slice(1); 
+        newArray = [...newArray,data.bids[0]];
+          return newArray;
         });
-
+      }}
+      if(data.asks.length>0){ if(parseFloat(data.asks[0][0])!=0 && parseFloat(data.asks[0][1])!=0){
+     
+          
+          
         setAsks((originalAsks) => {
+          
+          
           const asksAfterUpdate = [...(originalAsks || [])];
-
-          for (let i = 0; i < asksAfterUpdate.length; i++) {
-            for (let j = 0; j < data.asks.length; j++) {
-              if (asksAfterUpdate[i][0] === data.asks[j][0]) {
-                asksAfterUpdate[i][1] = data.asks[j][1];
-                break;
-              }
-            }
-          }
-          return asksAfterUpdate;
+          let newArray = asksAfterUpdate.slice(1); 
+          newArray = [...newArray,data.bids[0]];
+            return newArray;
         });
+      }}
       },
       `depth-${market}`
     );
